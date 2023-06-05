@@ -118,14 +118,47 @@ function createMap(earthquakes) {
     layers: [street, earthquakes]
   });
 
-  L.control.Legend({
-    position: "bottomleft",
-    legends: [{
-        label: "Marker1",
-        type: "circle",
-        url: "marker/marker-red.png",
-    }]
-  }).addTo(map);
+  // function getColor(d) {
+  //   return d > 5 ? 'red' :
+  //       d > 4 ? '#E64A19' :
+  //       d > 3 ? '#EF6C00' :
+  //       d > 2 ? '#FFA000' :
+  //       d > 1 ? '#FFF176' :
+  //       '#81C784';
+  // }
+
+  function createLegend() {
+      // Set up the legend
+      let legend = L.control({
+        position: 'bottomleft'
+      });
+
+      legend.onAdd = function() {
+          let div = L.DomUtil.create('div', 'info legend');
+
+          let grades = [0, 20, 40, 60, 80, 100];
+          let colors = [
+            "#cccc00",
+            "#ff6600",
+            "#ff9933",
+            "#ffcc00",
+            "#ffff00"
+          ];
+
+          // loop through our density intervals and generate a label with a colored square for each interval
+          for (var i = 0; i < grades.length; i++) {
+              div.innerHTML +=
+                  '<i style="background:' + colors[i] + '"></i> ' +
+                  grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+          }
+          return div;
+      };
+      return legend;
+  }
+
+  createLegend().addTo(myMap)
+
+  
 
   // Create a layer control that contains our baseMaps.
   // Be sure to add an overlay Layer that contains the earthquake GeoJSON.
