@@ -180,9 +180,7 @@ d3.json(QUERY_URL).then(function (data) {
         weight: 2
       })
       .addTo(plates);
-
-        // add the tectonicplates layer to the map.
-        plates.addTo(map);
+      
       });
 
 }});
