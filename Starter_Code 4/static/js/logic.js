@@ -1,6 +1,8 @@
 // Store our API endpoint as queryUrl.
 const QUERY_URL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 
+const PLATE_QUERY_URL = "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json";
+
 const COLOR_DEPTHS = [0, 25, 50, 75, 100];
 const COLOR_COLORS = [
   "#cccc00",
@@ -106,6 +108,8 @@ d3.json(QUERY_URL).then(function (data) {
       attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
     });
 
+    var plates = new L.LayerGroup();
+
     // Create a baseMaps object.
     let baseMaps = {
       "Street Map": street,
@@ -114,7 +118,8 @@ d3.json(QUERY_URL).then(function (data) {
 
     // Create an overlays object.
     let overlayMaps = {
-      Earthquakes: earthquakes
+      Earthquakes: earthquakes,
+      Plates: plates
     }
 
     // Create a new map.
@@ -124,7 +129,7 @@ d3.json(QUERY_URL).then(function (data) {
         39.09, -117.71
       ],
       zoom: 4.6,
-      layers: [street, earthquakes]
+      layers: [street, earthquakes, plates]
     });
 
     // function getColor(d) {
@@ -165,5 +170,19 @@ d3.json(QUERY_URL).then(function (data) {
     L.control.layers(baseMaps, overlayMaps, {
       collapsed: false
     }).addTo(myMap);
+
+
+    // Add tectonic plates
+    d3.json(PLATE_QUERY_URL).then(function(platedata) {
+ 
+      L.geoJson(platedata, {
+        color: "orange",
+        weight: 2
+      })
+      .addTo(plates);
+
+        // add the tectonicplates layer to the map.
+        plates.addTo(map);
+      });
 
 }});
